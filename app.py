@@ -2,20 +2,19 @@ import streamlit as st
 from modules.file_handler import load_csv_data, load_google_sheet_data
 from config.config import GOOGLE_SHEETS_API_KEY
 
-def dynamic_query_input():
-   
+def dynamic_query_input(main_column):
+    
     prompt_template = st.text_input(
-        "Enter your query :", 
-        placeholder="Get me the email address of {company}"
+        "Enter your query:", 
+        placeholder=f"make the search in {{{main_column}}}"
     )
 
     if prompt_template:
         st.write("Generated Queries:")
-        query=prompt_template
+        query = prompt_template
         st.write(f"- {query}")
 
 def upload_csv_file():
-   
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
     if uploaded_file is not None:
         data = load_csv_data(uploaded_file)
@@ -25,12 +24,10 @@ def upload_csv_file():
         
         main_column = st.selectbox("Select the main column (e.g., company names):", data.columns)
         st.write(f"Selected column: {main_column}")
-
         
-        dynamic_query_input()
+        dynamic_query_input(main_column)
 
 def connect_to_google_sheets():
-   
     sheet_url = st.text_input("Enter Google Sheets URL")
     if st.button("Load Google Sheet Data"):
         if sheet_url:
@@ -44,7 +41,7 @@ def connect_to_google_sheets():
                 st.write(f"Selected column: {main_column}")
 
                 
-                dynamic_query_input(data, main_column)
+                dynamic_query_input(main_column)
         else:
             st.error("Please enter a valid Google Sheets URL.")
 
