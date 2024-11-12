@@ -2,7 +2,7 @@ import streamlit as st
 from modules.file_handler import load_csv_data, load_google_sheet_data
 from config.config import GOOGLE_SHEETS_API_KEY
 
-def dynamic_query_input(data, main_column):
+def dynamic_query_input():
    
     prompt_template = st.text_input(
         "Enter your query :", 
@@ -27,7 +27,7 @@ def upload_csv_file():
         st.write(f"Selected column: {main_column}")
 
         
-        dynamic_query_input(data, main_column)
+        dynamic_query_input()
 
 def connect_to_google_sheets():
    
