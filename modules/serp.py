@@ -28,9 +28,9 @@ class SearchClient:
         query_count = 0  # Track total number of queries made
         
         for value in data[main_column]:
-            # Stop if total queries exceed 3
-            if query_count >= 3:
-                print("Limit of 3 total queries reached.")
+            # Stop if total queries exceed 1
+            if query_count >= 1:
+                print("Limit of 1 total queries reached.")
                 break
             
             # Generate query by replacing placeholder with actual value
