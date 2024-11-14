@@ -3,7 +3,6 @@ import requests
 from typing import Dict, List
 from dotenv import load_dotenv
 import pandas as pd
-
 class SearchClient:
     def __init__(self):
         """Initialize the search client with API key from environment variables."""
@@ -13,9 +12,9 @@ class SearchClient:
             raise ValueError("SERPAPI_KEY not found in environment variables")
         self.base_url = "https://serpapi.com/search"
 
-    def process_query(self, data: pd.DataFrame, main_column: str, query_template: str) -> Dict[str, List[Dict]]:
+    def process_query(self, data: pd.DataFrame, main_column: str, query_template: str) -> Dict[str, pd.DataFrame]:
         """
-        Process search queries for each value in the specified column.
+        Process search queries for each value in the specified column and print the results.
         
         Args:
             data (pd.DataFrame): Input dataframe containing the data
@@ -23,16 +22,31 @@ class SearchClient:
             query_template (str): Query template with {column_name} placeholder
             
         Returns:
-            Dict[str, List[Dict]]: Dictionary mapping values to their search results
+            Dict[str, pd.DataFrame]: Dictionary mapping values to their formatted search results
         """
         results_dict = {}
+        query_count = 0  # Track total number of queries made
         
         for value in data[main_column]:
+            # Stop if total queries exceed 3
+            if query_count >= 3:
+                print("Limit of 3 total queries reached.")
+                break
+            
             # Generate query by replacing placeholder with actual value
             query = query_template.replace(f"{{{main_column}}}", str(value))
-            results = self.search(query)
-            results_dict[value] = results
             
+            results = self.search(query)
+            if results:  # Only process if there are results
+                formatted_results = self.format_results(results)
+                results_dict[value] = formatted_results
+                query_count += 1  # Increment total query count
+                
+                # Print the search results for the current value
+                print(f"Search results for {value}:")
+                print(formatted_results)
+                print()
+        
         return results_dict
 
     def search(self, query: str, location: str = "United States") -> List[Dict]:
@@ -106,15 +120,7 @@ def get_search_results(data: pd.DataFrame, main_column: str, query_template: str
     """
     try:
         client = SearchClient()
-        results_dict = client.process_query(data, main_column, query_template)
-        
-        # Format results into DataFrames
-        formatted_results = {}
-        for value, results in results_dict.items():
-            formatted_results[value] = client.format_results(results)
-            
-        return formatted_results
-        
+        return client.process_query(data, main_column, query_template)
     except Exception as e:
         print(f"Error in get_search_results: {str(e)}")
         return {}

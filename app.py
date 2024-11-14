@@ -7,20 +7,21 @@ from config.config import GOOGLE_SHEETS_API_KEY
 def process_search_results(results_dict):
     """Handle the display and download of search results."""
     st.subheader("Search Results")
+    
+    if not results_dict:
+        st.write("No results found.")
+    
     for value, df in results_dict.items():
         with st.expander(f"Results for: {value}"):
             if not df.empty:
-                st.dataframe(df)
+                st.write(f"Showing results for search term: {value}")
+                st.dataframe(df)  # Display data in a dataframe
             else:
                 st.write("No results found")
-    
+
     # Option to download all results
     if results_dict:
-        all_results = pd.concat([
-            df.assign(search_term=value) 
-            for value, df in results_dict.items()
-        ])
-        
+        all_results = pd.concat([df.assign(search_term=value) for value, df in results_dict.items()])
         csv = all_results.to_csv(index=False)
         st.download_button(
             label="Download All Results",
@@ -29,11 +30,12 @@ def process_search_results(results_dict):
             mime="text/csv"
         )
 
+
 def dynamic_query_input(data, main_column):
     """Handle query input and search execution."""
     prompt_template = st.text_input(
-        "Enter your query:", 
-        placeholder=f"make the search in {{{main_column}}}"
+        "Enter your query template:", 
+        placeholder=f"Search for {{{main_column}}}"
     )
 
     if prompt_template:
