@@ -15,11 +15,11 @@ def process_search_results(results_dict):
         with st.expander(f"Results for: {value}"):
             if not df.empty:
                 st.write(f"Showing results for search term: {value}")
-                st.dataframe(df)  # Display data in a dataframe
+                st.dataframe(df) 
             else:
                 st.write("No results found")
 
-    # Option to download all results
+    
     if results_dict:
         all_results = pd.concat([df.assign(search_term=value) for value, df in results_dict.items()])
         csv = all_results.to_csv(index=False)

@@ -1,8 +1,10 @@
 import os
 import requests
+import re
 from typing import Dict, List
 from dotenv import load_dotenv
 import pandas as pd
+
 class SearchClient:
     def __init__(self):
         """Initialize the search client with API key from environment variables."""
@@ -19,33 +21,29 @@ class SearchClient:
         Args:
             data (pd.DataFrame): Input dataframe containing the data
             main_column (str): Column name containing values to search
-            query_template (str): Query template with {column_name} placeholder
+            query_template (str): Query template with {category} placeholder
             
         Returns:
             Dict[str, pd.DataFrame]: Dictionary mapping values to their formatted search results
         """
         results_dict = {}
-        query_count = 0  # Track total number of queries made
-        
+        query_count = 0 
         for value in data[main_column]:
-            # Stop if total queries exceed 1
-            if query_count >= 1:
-                print("Limit of 1 total queries reached.")
+            if query_count >= 3: 
                 break
             
-            # Generate query by replacing placeholder with actual value
-            query = query_template.replace(f"{{{main_column}}}", str(value))
-            
+           
+            query = query_template.replace(f"{{category}}", str(value))
             results = self.search(query)
-            if results:  # Only process if there are results
-                formatted_results = self.format_results(results)
-                results_dict[value] = formatted_results
-                query_count += 1  # Increment total query count
-                
-                # Print the search results for the current value
-                print(f"Search results for {value}:")
-                print(formatted_results)
-                print()
+            formatted_results = self.extract_results(results)
+            results_dict[value] = formatted_results
+            
+           
+            print(f"Search results for {value}:")
+            print(formatted_results)
+            print()
+            
+            query_count += 1 
         
         return results_dict
 
@@ -86,24 +84,29 @@ class SearchClient:
             return []
 
     @staticmethod
-    def format_results(results: List[Dict]) -> pd.DataFrame:
+    def extract_results(results: List[Dict]) -> pd.DataFrame:
         """
-        Convert search results to a pandas DataFrame.
+        Extract useful information from search results.
         
         Args:
             results (List[Dict]): List of search results from SerpApi
             
         Returns:
-            pd.DataFrame: Formatted results in a DataFrame
+            pd.DataFrame: DataFrame with relevant results
         """
         formatted_results = []
+        
+        # Extract information from the snippet and link (based on the query type)
         for result in results:
+            snippet = result.get('snippet', '')
+            link = result.get('link', '')
             formatted_results.append({
                 'title': result.get('title', ''),
-                'link': result.get('link', ''),
-                'snippet': result.get('snippet', ''),
-                'position': result.get('position', '')
+                'link': link,
+                'snippet': snippet
             })
+        
+        # Return the results in a DataFrame
         return pd.DataFrame(formatted_results)
 
 def get_search_results(data: pd.DataFrame, main_column: str, query_template: str) -> Dict[str, pd.DataFrame]:
@@ -113,7 +116,7 @@ def get_search_results(data: pd.DataFrame, main_column: str, query_template: str
     Args:
         data (pd.DataFrame): Input dataframe containing the data
         main_column (str): Column name containing values to search
-        query_template (str): Query template with {column_name} placeholder
+        query_template (str): Query template with {category} placeholder
         
     Returns:
         Dict[str, pd.DataFrame]: Dictionary mapping values to their formatted search results
