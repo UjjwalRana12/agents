@@ -8,4 +8,4 @@ langchain
 faiss-cpu
 transformers
 torch
-
+groq
