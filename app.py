@@ -3,65 +3,80 @@ import pandas as pd
 from modules.file_handler import load_csv_data, load_google_sheet_data
 from modules.serp import get_search_results
 from config.config import GOOGLE_SHEETS_API_KEY
+from modules.agent1 import LLMProcessor
 
 
 def process_search_results(results_dict):
-    """Handle the display and download of search results."""
+    """Handle the display, LLM processing, and download of search results."""
     st.subheader("Search Results")
+    
+    llm_processor = LLMProcessor()  
     
     if not results_dict:
         st.write("No results found.")
         return
     
+    all_results = []
     for query, df in results_dict.items():
         with st.expander(f"Results for query: {query}"):
             if not df.empty:
                 st.write(f"Search results for: {query}")
                 st.dataframe(df)
-            else:
-                st.write("No results found")
-    
-    if results_dict:
-        # Combine all results with query information
-        all_results = []
-        for query, df in results_dict.items():
-            if not df.empty:
+                
+                
+                combined_snippets = " ".join(df['snippet'].dropna().tolist())
+                st.write("Processing snippets with LLM...")
+                
+                try:
+                    
+                    processed_output = llm_processor.process_with_llm(combined_snippets)
+                    st.success("LLM successfully processed the data!")
+                    st.write("**Processed Summary:**")
+                    st.write(processed_output)
+                except Exception as e:
+                    st.error(f"Error processing data with LLM: {str(e)}")
+                
+               
                 df = df.copy()
                 df['search_query'] = query
                 all_results.append(df)
-        
-        if all_results:
-            combined_results = pd.concat(all_results, ignore_index=True)
-            csv = combined_results.to_csv(index=False)
-            st.download_button(
-                label="Download All Results",
-                data=csv,
-                file_name="search_results.csv",
-                mime="text/csv"
-            )
+            else:
+                st.write("No results found")
+    
+    if all_results:
+        combined_results = pd.concat(all_results, ignore_index=True)
+        csv = combined_results.to_csv(index=False)
+        st.download_button(
+            label="Download All Results",
+            data=csv,
+            file_name="search_results.csv",
+            mime="text/csv"
+        )
+
 
 def execute_search(data, main_column, query_template):
     """Execute search with the exact query template."""
     results_dict = {}
     
-    # Get unique values from the selected column
+    
     unique_values = data[main_column].unique()
     
-    with st.status("Performing searches...") as status:
+    with st.spinner("Performing searches..."):
         total = len(unique_values)
         for i, value in enumerate(unique_values, 1):
-            # Format the query template with the current value
+            
             formatted_query = query_template.replace(f"{{{main_column}}}", str(value))
-            status.update(label=f"Searching {i}/{total}: {formatted_query}")
+            st.info(f"Searching {i}/{total}: {formatted_query}")
             
             try:
-                # Call SERP API with the formatted query
-                results = get_search_results(formatted_query)  # This should be your actual SERP API call
+               
+                results = get_search_results(formatted_query)
                 results_dict[formatted_query] = results
             except Exception as e:
                 st.error(f"Error searching for '{formatted_query}': {str(e)}")
     
     return results_dict
+
 
 def dynamic_query_input(data, main_column):
     """Handle query input and search execution."""
@@ -72,7 +87,7 @@ def dynamic_query_input(data, main_column):
 
     if query_template:
         st.write("Generated Query:")
-        # Show an example of how the query will look
+       
         example_value = data[main_column].iloc[0] if not data.empty else "example"
         example_query = query_template.replace(f"{{{main_column}}}", str(example_value))
         st.write(f"* {example_query}")
@@ -80,6 +95,7 @@ def dynamic_query_input(data, main_column):
         if st.button("Run Search"):
             results = execute_search(data, main_column, query_template)
             process_search_results(results)
+
 
 def handle_data_loading(data):
     """Process loaded data and display column selection."""
@@ -101,6 +117,7 @@ def handle_data_loading(data):
             return True
     return False
 
+
 def upload_csv_file():
     """Handle CSV file upload."""
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
@@ -110,6 +127,7 @@ def upload_csv_file():
             handle_data_loading(data)
         except Exception as e:
             st.error(f"Error loading CSV: {str(e)}")
+
 
 def connect_to_google_sheets():
     """Handle Google Sheets connection."""
@@ -125,9 +143,10 @@ def connect_to_google_sheets():
         else:
             st.error("Please enter a valid Google Sheets URL.")
 
+
 def main():
     """Main application function."""
-    st.title("Search Query Builder")
+    st.title("Search Query Builder with LLM Integration")
 
     option = st.sidebar.selectbox(
         "Data Input Source", 
@@ -140,6 +159,7 @@ def main():
     else:
         st.subheader("Connect to a Google Sheet")
         connect_to_google_sheets()
+
 
 if __name__ == "__main__":
     main()
