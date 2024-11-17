@@ -15,7 +15,7 @@ def load_google_sheet_data(sheet_url, api_key):
         credentials = ServiceAccountCredentials.from_json_keyfile_name(api_key, scope)
         client = gspread.authorize(credentials)
         
-        # Open Google Sheet
+       
         sheet = client.open_by_url(sheet_url)
         worksheet = sheet.get_worksheet(0) 
         data = pd.DataFrame(worksheet.get_all_records())

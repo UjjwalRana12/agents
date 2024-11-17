@@ -7,7 +7,6 @@ from modules.agent1 import LLMProcessor
 
 
 def process_search_results(results_dict):
-    """Handle the display, LLM processing, and download of search results."""
     st.subheader("Search Results")
     
     llm_processor = LLMProcessor()  
@@ -55,7 +54,7 @@ def process_search_results(results_dict):
 
 
 def execute_search(data, main_column, query_template):
-    """Execute search with the exact query template."""
+    
     results_dict = {}
     
     
@@ -79,7 +78,7 @@ def execute_search(data, main_column, query_template):
 
 
 def dynamic_query_input(data, main_column):
-    """Handle query input and search execution."""
+    
     query_template = st.text_input(
         "Enter your query template:", 
         placeholder=f"Example: what is the name of this {{{main_column}}}"
@@ -119,7 +118,7 @@ def handle_data_loading(data):
 
 
 def upload_csv_file():
-    """Handle CSV file upload."""
+    
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
     if uploaded_file is not None:
         try:
@@ -130,7 +129,7 @@ def upload_csv_file():
 
 
 def connect_to_google_sheets():
-    """Handle Google Sheets connection."""
+    
     sheet_url = st.text_input("Enter Google Sheets URL")
     if st.button("Load Google Sheet Data"):
         if sheet_url:
@@ -145,7 +144,7 @@ def connect_to_google_sheets():
 
 
 def main():
-    """Main application function."""
+    
     st.title("Search Query Builder with LLM Integration")
 
     option = st.sidebar.selectbox(
