@@ -7,7 +7,7 @@ import json
 
 class SearchClient:
     def __init__(self):
-        """Initialize the search client with API key from environment variables."""
+      
         load_dotenv()
         self.api_key = os.getenv('SERPAPI_KEY')
         if not self.api_key:
@@ -15,9 +15,7 @@ class SearchClient:
         self.base_url = "https://serpapi.com/search"
 
     def search(self, query: str, location: str = "United States") -> List[Dict]:
-        """
-        Perform a Google search using SerpApi.
-        """
+       
         params = {
             "q": query,
             "location": location,
@@ -62,9 +60,7 @@ class SearchClient:
 
     @staticmethod
     def extract_results(results: List[Dict]) -> pd.DataFrame:
-        """
-        Extract useful information from search results.
-        """
+       
         formatted_results = []
 
         for result in results:

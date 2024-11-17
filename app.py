@@ -4,6 +4,7 @@ from modules.file_handler import load_csv_data, load_google_sheet_data
 from modules.serp import get_search_results
 from config.config import GOOGLE_SHEETS_API_KEY
 
+
 def process_search_results(results_dict):
     """Handle the display and download of search results."""
     st.subheader("Search Results")

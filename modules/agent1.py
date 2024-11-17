@@ -1,32 +1,36 @@
 import os
-from groq import Groq
+from groq import Groq  
 from dotenv import load_dotenv
 
 load_dotenv()
-groq_token=os.getenv("GROQ_KEY")
 
 
+class LLMProcessor:
+    def __init__(self):
+        self.api_key = os.getenv("GROQ_KEY")
+        if not self.api_key:
+            raise ValueError("GROQ_KEY not found in environment variables.")
+        self.client = Groq(api_key=self.api_key)
 
-client=Groq(api_key=groq_token)
-
-chat_completion=client.chat.completions.create(
-    messages=[
-        {
-            "role":"system",
-            "content":"You are an assistant that helps with rephrasing and clarifying information."
-                  "The user has provided the following answer:"
-
-                  "Please rephrase this information in a concise and clear manner."
-        },
-        {
-            "role":"user",
-            "content":"explain llm",
-        }
-    ],
-    model="mixtral-8x7b-32768",
-    temperature=0.7,
-    max_tokens=256,
-    
-)
-
-print(chat_completion.choices[0].message.content)
+    def process_with_llm(self, content: str) -> str:
+       
+        try:
+            chat_completion = self.client.chat.completions.create(
+                messages=[
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are an assistant that helps clarify and summarize search results. "
+                            "Please summarize the following information concisely."
+                        ),
+                    },
+                    {"role": "user", "content": content},
+                ],
+                model="mixtral-8x7b-32768",  
+                temperature=0.7,
+                max_tokens=256,
+            )
+            return chat_completion.choices[0].message.content
+        except Exception as e:
+            print(f"Error processing with LLM: {str(e)}")
+            return "Error processing request."
