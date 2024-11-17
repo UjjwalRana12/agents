@@ -28,8 +28,10 @@ Enable the "Google Sheets API" and "Google Drive API."
 Download the Credentials File:
 
 -->Go to the Credentials section.
-Create a service account key and download the JSON file.
-Rename the file to google.json and place it in the project directory
+a)Navigate to the Credentials section in the Google Cloud Console.
+b)Create a Service Account Key.
+c)Download the .json file.
+d)Rename the file to google.json and place it in the root directory of your project.
 
 5) go to the root directory and run the command
     streamlit run app.py
