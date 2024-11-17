@@ -19,7 +19,19 @@ SETUP INSTRUCTIONS
  GOOGLE_SHEETS_API_KEY=AIzaSyBgPvxlbJaHUIWHqYhiJ0jd_spTEMMFEgA
  GROQ_KEY=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
 
-4) go to the root directory and run the command
+4)-->Configure Google Sheets API
+-->Enable the Google Sheets API:
+
+-->Go to the Google Cloud Console.
+Create a project 
+Enable the "Google Sheets API" and "Google Drive API."
+Download the Credentials File:
+
+-->Go to the Credentials section.
+Create a service account key and download the JSON file.
+Rename the file to google.json and place it in the project directory
+
+5) go to the root directory and run the command
     streamlit run app.py
 
 
