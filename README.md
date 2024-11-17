@@ -15,9 +15,9 @@ SETUP INSTRUCTIONS
 
 3) create a .env file in root folder
   and paste the api keys
- SERPAPI_KEY=b7d564dd6042cadd79d1af24f6314ce51fb6bb0a0531e4d45818186425a9a6ad
- GOOGLE_SHEETS_API_KEY=AIzaSyBgPvxlbJaHUIWHqYhiJ0jd_spTEMMFEgA
- GROQ_KEY=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
+ SERPAPI_KEY=b7d***************
+ GOOGLE_SHEETS_API_KEY=AIzaSy************
+ GROQ_KEY=gsk_9h1Wl******************
 
 4)-->Configure Google Sheets API
 -->Enable the Google Sheets API:
@@ -58,3 +58,7 @@ Option 2: Connect to Google Sheets
 THIRD PARTY TOOL
 1)groq mistral model
 2)serp Api
+
+
+https://github.com/user-attachments/assets/ecb6ccb3-fd02-468e-b8cf-9f19c15971cf
+
