@@ -60,5 +60,7 @@ THIRD PARTY TOOL
 2)serp Api
 
 
+ALSO HERE IS THE LINK OF VIDEO :-https://www.loom.com/share/90254c29d6b54f85b7f81e5f1a1c6ff8?sid=6e95b618-374a-4a5c-9e6e-3340f2df7db8
+
 https://github.com/user-attachments/assets/ecb6ccb3-fd02-468e-b8cf-9f19c15971cf
 
