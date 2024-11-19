@@ -1,4 +1,4 @@
-Search Query Builder with LLM Integration
+Search Query Builder with LLM Integration:-
 Project Summary
 This project simplifies the process of executing dynamic search queries, retrieving structured results, and analyzing data using a Language Learning Model (LLM).
 It allows users to connect to data sources, generate queries, process search results, and directly update Google Sheets with LLM-processed insights
